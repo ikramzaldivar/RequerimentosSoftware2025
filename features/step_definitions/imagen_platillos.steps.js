@@ -148,3 +148,9 @@ Then('la subida es bloqueada', function () {
     throw new Error('Esta imagen debería ser bloqueada.');
   }
 });
+
+Then('el sistema muestra "El archivo supera el tamaño máximo permitido (5MB)."', function () {
+  if (this.tamano <= 5) {
+    throw new Error('Este archivo no debería ser aceptado.');
+  }
+});
