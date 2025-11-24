@@ -1,33 +1,47 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 
-// VALIDA DOMINIO
+// ------------------------------------------
+// VALIDACIÓN INSTITUCIONAL
+// ------------------------------------------
+
 When('el sistema valida el dominio institucional', function () {
-  this.esITESO = this.email.endsWith('@iteso.mx');
+  this.permitido = this.email.endsWith('@iteso.mx');
 });
 
 Then('el acceso al mapa está permitido', function () {
-  if (!this.esITESO) throw new Error('Acceso debería estar permitido');
+  if (!this.permitido) throw new Error('Acceso debería estar permitido');
 });
 
 Then('el acceso al mapa está denegado', function () {
-  if (this.esITESO) throw new Error('Acceso debería estar denegado');
+  if (this.permitido) throw new Error('Acceso debería estar denegado');
 });
 
-// ---------------------------
+// ------------------------------------------
 // BUSQUEDA EN MAPA
-// ---------------------------
+// ------------------------------------------
 
 Given('que el usuario está en el mapa interactivo', function () {
   this.enMapa = true;
 });
 
-When('busca {string}', function (text) {
-  this.busqueda = text;
+When('busca {string}', function (texto) {
+  this.busqueda = texto;
 });
 
-// ---------------------------
-// UBICACION
-// ---------------------------
+Then('el mapa se centra en ese punto', function () {
+  if (!this.busqueda) throw new Error('No hubo búsqueda válida');
+});
+
+// Error: cafetería no encontrada
+Then('el sistema muestra "No se encontraron cafeterías con ese nombre"', function () {
+  if (this.busqueda !== 'Café Fantasma') {
+    throw new Error('Este test simula búsqueda fallida');
+  }
+});
+
+// ------------------------------------------
+// GEOLOCALIZACIÓN
+// ------------------------------------------
 
 Given('que el usuario activó la geolocalización', function () {
   this.permisoUbicacion = true;
@@ -41,44 +55,13 @@ Then('el mapa se centra en la ubicación del usuario', function () {
   if (!this.coords) throw new Error('No hay permisos de ubicación');
 });
 
-// NEGAR UBICACION
-
 Given('que el usuario niega el permiso de ubicación', function () {
   this.permisoUbicacion = false;
 });
 
 When('intenta activar centrar en mi ubicación', function () {
-  this.intento = true;
+  this.intentaCentro = true;
 });
 
 Then('se muestra el mensaje "No se pudo acceder a tu ubicación"', function () {
-  if (this.permisoUbicacion) throw new Error('Sí había permisos');
-});
-
-// ---------------------------
-// MAPA LENTO
-// ---------------------------
-
-Given('que el usuario abre el mapa', function () {
-  this.abriendo = true;
-});
-
-When('el mapa tarda más de 3 segundos en cargar', function () {
-  this.lento = true;
-});
-
-Then('aparece el mensaje "Cargando mapa..."', function () {
-  if (!this.lento) throw new Error('No hubo carga lenta');
-});
-
-// ---------------------------
-// MAPBOX FALLA
-// ---------------------------
-
-Given('que el usuario intenta cargar el mapa', function () {
-  this.intentaMapa = true;
-});
-
-When('la API de Mapbox falla', function () {
-  this.falla = true;
-});
+  if (this.permisoUbica

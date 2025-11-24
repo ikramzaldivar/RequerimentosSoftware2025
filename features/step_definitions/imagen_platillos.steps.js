@@ -1,8 +1,8 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 
-// ---------------------------
-// RESENA + SUBIR IMAGENES
-// ---------------------------
+// ------------------------------------------
+// RESEÑA E INTENTOS DE SUBIDA
+// ------------------------------------------
 
 When('crea una reseña', function () {
   this.creoResena = true;
@@ -10,23 +10,24 @@ When('crea una reseña', function () {
 
 Then('puede subir imágenes', function () {
   if (!this.email.endsWith('@iteso.mx')) {
-    throw new Error('Solo usuarios ITESO pueden subir imágenes');
+    throw new Error('Correo no institucional, no puede subir imágenes');
   }
 });
 
+// Gmail bloqueado
 When('intenta subir imágenes', function () {
   this.intentaSubir = true;
 });
 
 Then('el sistema bloquea la acción', function () {
   if (this.email.endsWith('@iteso.mx')) {
-    throw new Error('No se debería bloquear a usuarios ITESO');
+    throw new Error('Usuarios ITESO no deben ser bloqueados');
   }
 });
 
-// ---------------------------
-// VALIDACION DE FORMATO
-// ---------------------------
+// ------------------------------------------
+// FORMATOS Y VALIDACIONES
+// ------------------------------------------
 
 Given('que el usuario selecciona un archivo JPG de 2MB', function () {
   this.formato = 'jpg';
@@ -34,44 +35,49 @@ Given('que el usuario selecciona un archivo JPG de 2MB', function () {
 });
 
 When('pulsa subir imagen', function () {
-  this.subioFoto = true;
+  this.subio = true;
 });
 
 Then('el sistema acepta el archivo', function () {
-  if (this.formato !== 'jpg' || this.tamano > 5)
-    throw new Error('El archivo no es válido');
+  if (this.formato !== 'jpg' || this.tamano > 5) {
+    throw new Error('Archivo inválido, no debería aceptar');
+  }
 });
 
-// PDF INVÁLIDO
+// PDF inválido
 Given('que el usuario selecciona un archivo PDF', function () {
   this.formato = 'pdf';
 });
 
 When('intenta subirlo', function () {
-  this.intentaSubir = true;
+  this.intento = true;
 });
 
-Then('el sistema muestra "Formato no permitido. Solo JPG, PNG o WebP."', function () {
-  if (this.formato !== 'pdf') throw new Error('Formato inesperado');
+Then('el sistema muestra "Formato no permitido"', function () {
+  if (this.formato !== 'pdf') throw new Error('Este test debe simular PDF inválido');
 });
 
-// PESO CORRECTO
+// Tamaño correcto
 Given('que el archivo pesa 3MB', function () {
   this.tamano = 3;
 });
 
-// PESO EXCESIVO
+// Tamaño excesivo
 Given('que el archivo pesa 7MB', function () {
   this.tamano = 7;
 });
 
-Then('el sistema muestra "El archivo supera el tamaño máximo permitido (5 MB)."', function () {
-  if (this.tamano <= 5) throw new Error('Este archivo debería ser rechazado');
+Then('el archivo es aceptado', function () {
+  if (this.tamano > 5) throw new Error('El archivo no debería ser aceptado');
 });
 
-// ---------------------------
+Then('el sistema muestra "El archivo supera el tamaño máximo permitido (5MB)."', function () {
+  if (this.tamano <= 5) throw new Error('Este test simula archivo excedido');
+});
+
+// ------------------------------------------
 // SUBIDA EXITOSA
-// ---------------------------
+// ------------------------------------------
 
 Given('que la conexión es estable', function () {
   this.conexion = true;
@@ -82,12 +88,12 @@ When('el usuario sube la foto', function () {
 });
 
 Then('el sistema asocia la foto a la reseña', function () {
-  if (!this.conexion) throw new Error('Sin conexión = no asociar');
+  if (!this.conexion) throw new Error('No hay conexión');
 });
 
-// ---------------------------
+// ------------------------------------------
 // SUBIDA FALLIDA
-// ---------------------------
+// ------------------------------------------
 
 Given('que la conexión falla', function () {
   this.conexion = false;
@@ -97,16 +103,16 @@ When('el usuario intenta subir la foto', function () {
   this.subirIntento = true;
 });
 
-Then('el sistema muestra "No se pudo subir la foto"', function () {
+Then('la subida es bloqueada', function () {
   if (this.conexion) throw new Error('La conexión no falló');
 });
 
-// ---------------------------
-// ANALISIS DE IMAGEN
-// ---------------------------
+// ------------------------------------------
+// ANÁLISIS DE IMAGEN
+// ------------------------------------------
 
 Given('que la foto contiene comida normal', function () {
-  this.inapropiada = false;
+  this.inapropiado = false;
 });
 
 When('el sistema analiza la imagen', function () {
@@ -114,9 +120,17 @@ When('el sistema analiza la imagen', function () {
 });
 
 Then('permite subirla', function () {
-  if (this.inapropiada) throw new Error('Debió bloquearse');
+  if (this.inapropiado) {
+    throw new Error('Imagen inapropiada, no debería permitir');
+  }
 });
 
 Given('que la foto contiene contenido inapropiado', function () {
-  this.inapropiada = true;
+  this.inapropiado = true;
+});
+
+Then('la subida es bloqueada', function () {
+  if (!this.inapropiado) {
+    throw new Error('Imagen normal, no debería bloquear');
+  }
 });
