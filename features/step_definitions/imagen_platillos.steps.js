@@ -75,10 +75,13 @@ Given('que el archivo pesa 7MB', function () {
   this.tamano = 7;
 });
 
-Then('el sistema muestra {string}', function (mensaje) {
-  this.mensajeMostrado = mensaje;
+Then(
+  'el sistema muestra "El archivo supera el tamaño máximo permitido (5MB)."',
+  function () {
+    if (this.tamano <= 5) {
+      throw new Error('Este archivo no debería ser aceptado.');
+    }
 });
-
 
 // ----------------------------------------------------------
 // Subida correcta
