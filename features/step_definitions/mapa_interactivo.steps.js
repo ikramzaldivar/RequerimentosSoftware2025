@@ -1,24 +1,24 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 
-// ------------------------------------------
-// VALIDACIÓN INSTITUCIONAL
-// ------------------------------------------
+// ----------------------------------------------------------
+// Validación del dominio ITESO
+// ----------------------------------------------------------
 
 When('el sistema valida el dominio institucional', function () {
-  this.permitido = this.email.endsWith('@iteso.mx');
+  this.esITESO = this.email.endsWith('@iteso.mx');
 });
 
 Then('el acceso al mapa está permitido', function () {
-  if (!this.permitido) throw new Error('Acceso debería estar permitido');
+  if (!this.esITESO) throw new Error('Debe estar permitido.');
 });
 
 Then('el acceso al mapa está denegado', function () {
-  if (this.permitido) throw new Error('Acceso debería estar denegado');
+  if (this.esITESO) throw new Error('Debe estar denegado.');
 });
 
-// ------------------------------------------
-// BUSQUEDA EN MAPA
-// ------------------------------------------
+// ----------------------------------------------------------
+// Búsqueda en el mapa
+// ----------------------------------------------------------
 
 Given('que el usuario está en el mapa interactivo', function () {
   this.enMapa = true;
@@ -29,19 +29,24 @@ When('busca {string}', function (texto) {
 });
 
 Then('el mapa se centra en ese punto', function () {
-  if (!this.busqueda) throw new Error('No hubo búsqueda válida');
+  if (!this.busqueda) throw new Error('No hay término de búsqueda.');
 });
 
-// Error: cafetería no encontrada
-Then('el sistema muestra "No se encontraron cafeterías con ese nombre"', function () {
-  if (this.busqueda !== 'Café Fantasma') {
-    throw new Error('Este test simula búsqueda fallida');
+// Cafetería inexistente
+Then(
+  'el sistema muestra "No se encontraron cafeterías con ese nombre"',
+  function () {
+    if (this.busqueda !== 'Café Fantasma') {
+      throw new Error(
+        'Este mensaje aparece únicamente cuando no hay resultados.'
+      );
+    }
   }
-});
+);
 
-// ------------------------------------------
-// GEOLOCALIZACIÓN
-// ------------------------------------------
+// ----------------------------------------------------------
+// Geolocalización
+// ----------------------------------------------------------
 
 Given('que el usuario activó la geolocalización', function () {
   this.permisoUbicacion = true;
@@ -52,26 +57,27 @@ When('CampusBites obtiene coordenadas', function () {
 });
 
 Then('el mapa se centra en la ubicación del usuario', function () {
-  if (!this.coords) throw new Error('No hay permisos de ubicación');
+  if (!this.coords) throw new Error('No hay permisos para ubicación.');
 });
 
+// Permiso negado
 Given('que el usuario niega el permiso de ubicación', function () {
   this.permisoUbicacion = false;
 });
 
 When('intenta activar centrar en mi ubicación', function () {
-  this.intentaCentro = true;
+  this.intento = true;
 });
 
 Then('se muestra el mensaje "No se pudo acceder a tu ubicación"', function () {
   if (this.permisoUbicacion) {
-    throw new Error('Había permisos pero el test simula negación');
+    throw new Error('Este mensaje aplica solo cuando falta el permiso.');
   }
 });
 
-// ------------------------------------------
-// MAPA LENTO
-// ------------------------------------------
+// ----------------------------------------------------------
+// Carga lenta
+// ----------------------------------------------------------
 
 Given('que el usuario abre el mapa', function () {
   this.abriendo = true;
@@ -82,21 +88,24 @@ When('el mapa tarda más de 3 segundos en cargar', function () {
 });
 
 Then('aparece el mensaje "Cargando mapa..."', function () {
-  if (!this.lento) throw new Error('No hubo carga lenta');
+  if (!this.lento) throw new Error('No hubo carga lenta.');
 });
 
-// ------------------------------------------
-// MAPBOX FALLA
-// ------------------------------------------
+// ----------------------------------------------------------
+// Fallo de Mapbox
+// ----------------------------------------------------------
 
 Given('que el usuario intenta cargar el mapa', function () {
-  this.intentando = true;
+  this.intentaCarga = true;
 });
 
 When('la API de Mapbox falla', function () {
-  this.falloAPI = true;
+  this.falla = true;
 });
 
-Then('el sistema muestra "No se pudo cargar el mapa. Intenta más tarde."', function () {
-  if (!this.falloAPI) throw new Error('La API no falló');
-});
+Then(
+  'el sistema muestra "No se pudo cargar el mapa. Intenta más tarde."',
+  function () {
+    if (!this.falla) throw new Error('Esta prueba simula falla de Mapbox.');
+  }
+);
