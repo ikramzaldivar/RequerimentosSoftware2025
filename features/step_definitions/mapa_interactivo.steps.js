@@ -64,4 +64,39 @@ When('intenta activar centrar en mi ubicación', function () {
 });
 
 Then('se muestra el mensaje "No se pudo acceder a tu ubicación"', function () {
-  if (this.permisoUbica
+  if (this.permisoUbicacion) {
+    throw new Error('Había permisos pero el test simula negación');
+  }
+});
+
+// ------------------------------------------
+// MAPA LENTO
+// ------------------------------------------
+
+Given('que el usuario abre el mapa', function () {
+  this.abriendo = true;
+});
+
+When('el mapa tarda más de 3 segundos en cargar', function () {
+  this.lento = true;
+});
+
+Then('aparece el mensaje "Cargando mapa..."', function () {
+  if (!this.lento) throw new Error('No hubo carga lenta');
+});
+
+// ------------------------------------------
+// MAPBOX FALLA
+// ------------------------------------------
+
+Given('que el usuario intenta cargar el mapa', function () {
+  this.intentando = true;
+});
+
+When('la API de Mapbox falla', function () {
+  this.falloAPI = true;
+});
+
+Then('el sistema muestra "No se pudo cargar el mapa. Intenta más tarde."', function () {
+  if (!this.falloAPI) throw new Error('La API no falló');
+});
