@@ -81,8 +81,7 @@ Then(
     if (this.tamano <= 5) {
       throw new Error('Este archivo no debería ser aceptado.');
     }
-  }
-);
+});
 
 // ----------------------------------------------------------
 // Subida correcta
