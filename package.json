@@ -1,0 +1,23 @@
+{
+  "name": "requerimentossoftware2025",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+  "bdd": "cucumber-js"
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ikramzaldivar/RequerimentosSoftware2025.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ikramzaldivar/RequerimentosSoftware2025/issues"
+  },
+  "homepage": "https://github.com/ikramzaldivar/RequerimentosSoftware2025#readme",
+  "description": "",
+  "devDependencies": {
+    "@cucumber/cucumber": "^12.2.0"
+  }
+}
